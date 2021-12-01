@@ -1,6 +1,5 @@
 package com.github.music.synchronization.dto.token;
 
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +10,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(name = "TokenDto", description = "Данные для сохранения токена в базе")
-public class TokenDto {
-    String guid;
+@Schema(name = "AuthResponseDto", description = "Дто на ответ авторизации")
+public class AuthResponseDto {
+    @Schema(name = "url", description = "ссылка на авторизацию", nullable = false)
+    String url;
 }
