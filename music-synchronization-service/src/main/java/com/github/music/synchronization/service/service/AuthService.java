@@ -13,4 +13,6 @@ public interface AuthService {
     BaseDataResponse<AuthResponseDto> getAuthUrl(AuthRequestDto token);
 
     BaseDataResponse<TokenDto> saveToken(TokenDto tokenDto);
+
+    BaseDataResponse<TokenDto> saveToken2(TokenDto tokenDto);
 }
