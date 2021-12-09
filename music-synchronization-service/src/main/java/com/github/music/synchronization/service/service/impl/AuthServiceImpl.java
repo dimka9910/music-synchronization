@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component
+@Component("AuthService")
 public class AuthServiceImpl implements AuthService {
 
     @Override
