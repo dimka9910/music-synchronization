@@ -35,4 +35,10 @@ public class AuthController {
         return authService.saveToken(tokenDto);
     }
 
+    @Operation(description = "Получение ссылки на авторизацию")
+    @PostMapping(value = "/save-user2", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public BaseDataResponse<TokenDto> saveUser2(@RequestBody TokenDto tokenDto) {
+        return authService.saveToken2(tokenDto);
+    }
+
 }

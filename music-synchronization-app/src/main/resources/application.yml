@@ -14,3 +14,7 @@ spring:
 #logging:
 #  config: classpath:log4j2-spring.xml
 
+
+services:
+  music-service:
+    url: http://localhost:8080
