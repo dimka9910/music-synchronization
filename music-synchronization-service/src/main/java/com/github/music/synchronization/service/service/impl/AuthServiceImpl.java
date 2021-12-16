@@ -20,8 +20,10 @@ public class AuthServiceImpl implements AuthService {
     private final ServiceClient serviceClient;
 
     @Override
-    public BaseDataResponse<AuthResponseDto> getAuthUrl(AuthRequestDto token) {
-        return null;
+    public BaseDataResponse<AuthResponseDto> getAuthUrl(AuthRequestDto authRequestDto) {
+        return BaseDataResponse.<AuthResponseDto>builder()
+                .data(AuthResponseDto.builder().url(serviceClient.getAuthUrl(authRequestDto)).build())
+                .success(true).build();
     }
 
     @Override

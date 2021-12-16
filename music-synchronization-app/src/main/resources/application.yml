@@ -18,3 +18,13 @@ spring:
 services:
   music-service:
     url: http://localhost:8080
+
+
+music-services:
+  urlMap:
+    APPLE: localhost:8080
+    YANDEX: /get2
+    SPOTIFY: /get3
+  actionsMap:
+    AUTH: /auth
+

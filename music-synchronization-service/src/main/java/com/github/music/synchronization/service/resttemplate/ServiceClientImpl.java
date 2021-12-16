@@ -1,8 +1,11 @@
 package com.github.music.synchronization.service.resttemplate;
 
 
+import com.github.music.synchronization.dto.enums.MusicServiceActions;
 import com.github.music.synchronization.dto.response.BaseDataResponse;
+import com.github.music.synchronization.dto.token.AuthRequestDto;
 import com.github.music.synchronization.dto.token.TokenDto;
+import com.github.music.synchronization.service.tools.MusicUrlHelper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -14,6 +17,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.BitSet;
 import java.util.List;
 
 @Component
@@ -27,8 +31,17 @@ public class ServiceClientImpl implements ServiceClient {
         return musicServiceUrl;
     }
 
+    private final MusicUrlHelper musicUrlHelper;
     private final RestTemplate appRestClient;
 
+
+    @Override
+    public String getAuthUrl(AuthRequestDto authRequestDto) {
+        return appRestClient.exchange(musicUrlHelper.getUrlMap().get(authRequestDto.getMusicProvider())
+                        + musicUrlHelper.getActionsMap().get(MusicServiceActions.AUTH), HttpMethod.GET,
+                new HttpEntity<>(null, null), new ParameterizedTypeReference<String>() {
+                }).getBody();
+    }
 
     @Override
     public BaseDataResponse<TokenDto> saveTokenTest(TokenDto tokenDto) {
