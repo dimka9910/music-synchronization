@@ -23,15 +23,10 @@ public class PlaylistController {
     private final MusicService musicService;
 
     @Operation(description = "Поиск плейлистов")
-    @PostMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public PagingResponseDto<PlaylistDto> searchPlaylists(@RequestBody PlaylistRequestDto playlistRequestDto) {
+    @PostMapping(value = "/transfer-playlist", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public PagingResponseDto<PlaylistDto> transferPlaylist(@RequestBody PlaylistRequestDto playlistRequestDto) {
         return null;
     }
 
-    @Operation(description = "Сохранение плейлистов")
-    @PostMapping(value = "/save", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public PagingResponseDto<PlaylistDto> savePlaylists(@RequestBody PlaylistRequestDto playlistRequestDto) {
-        return null;
-    }
 
 }

@@ -11,7 +11,7 @@ import java.util.Map;
 
 @Component
 @Data
-@ConfigurationProperties(prefix = "music-urls")
+@ConfigurationProperties(prefix = "music-services")
 public class MusicUrlHelper {
 
     private Map<MusicProvider, String> urlMap;

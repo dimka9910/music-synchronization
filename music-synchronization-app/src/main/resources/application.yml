@@ -15,16 +15,15 @@ spring:
 #  config: classpath:log4j2-spring.xml
 
 
-services:
-  music-service:
-    url: http://localhost:8080
-
-
 music-services:
   urlMap:
     APPLE: localhost:8080
     YANDEX: /get2
     SPOTIFY: /get3
   actionsMap:
-    AUTH: /auth
+    URL: /auth
+    CODE: /register
+    EXPORT_PLAYLIST: dsfs
+    IMPORT_PLAYLIST: sdfs
+    REGISTER_YANDEX: hhh
 
