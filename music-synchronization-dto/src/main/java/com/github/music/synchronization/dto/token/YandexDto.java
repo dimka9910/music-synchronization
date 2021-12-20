@@ -19,8 +19,6 @@ public class YandexDto {
     String username;
     String password;
     String tgBotId;
-
-    @JsonProperty("yandex_id")
     String yandexId;
 }
 
