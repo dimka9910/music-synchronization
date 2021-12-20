@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 public interface MusicService {
 
-    PagingResponseDto<PlaylistDto> searchPlaylists(PlaylistRequestDto playlistRequestDto);
-
-    PagingResponseDto<PlaylistDto> savePlaylists(PlaylistRequestDto playlistRequestDto);
+    PlaylistDto transferPlaylist(PlaylistRequestDto playlistRequestDto);
 
 }

@@ -15,4 +15,8 @@ import lombok.NoArgsConstructor;
 public class AuthRequestDto {
     @Schema(name = "musicProvider", description = "провайдер", nullable = false)
     MusicProvider musicProvider;
+
+    String tgBotId;
+
+    String guid;
 }

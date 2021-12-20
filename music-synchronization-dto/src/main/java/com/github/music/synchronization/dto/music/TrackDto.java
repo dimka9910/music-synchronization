@@ -16,8 +16,8 @@ public class TrackDto {
     @Schema(name = "name")
     private String name;
     @Schema(name = "album")
-    private AlbumDto album;
-    @Schema(name = "artistDto")
-    private ArtistDto artistDto;
+    private String album;
+    @Schema(name = "artist")
+    private String artist;
 
 }
