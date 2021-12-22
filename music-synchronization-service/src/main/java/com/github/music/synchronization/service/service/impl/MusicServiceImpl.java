@@ -9,11 +9,13 @@ import com.github.music.synchronization.service.db.repository.UserRepository;
 import com.github.music.synchronization.service.resttemplate.ServiceClient;
 import com.github.music.synchronization.service.service.MusicService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class MusicServiceImpl implements MusicService {
 
@@ -31,9 +33,11 @@ public class MusicServiceImpl implements MusicService {
 
         assert playlistRequestDto.getMusicProvider() != null;
         if (userEntity == null){
+            log.error("пользователь не найден");
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "no such user");
         }
         if (userEntity.getServiceId(playlistRequestDto.getMusicProvider()) == null){
+            log.error("нет гуида пользователя для музыкального сервиса");
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "no such user for provider");
         }
 

@@ -25,6 +25,7 @@ public class PlaylistController {
     @Operation(description = "Поиск плейлистов")
     @PostMapping(value = "/transfer-playlist", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public PlaylistDto transferPlaylist(@RequestBody PlaylistRequestDto playlistRequestDto) {
+        log.info("запрос на трансфер плейлистов: " + playlistRequestDto);
         return musicService.transferPlaylist(playlistRequestDto);
     }
 
