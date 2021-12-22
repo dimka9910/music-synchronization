@@ -12,11 +12,13 @@ import com.github.music.synchronization.service.db.repository.UserRepository;
 import com.github.music.synchronization.service.resttemplate.ServiceClient;
 import com.github.music.synchronization.service.service.AuthService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+@Slf4j
 @Component("AuthService")
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -45,6 +47,7 @@ public class AuthServiceImpl implements AuthService {
         if (authCodeDto.getTgBotId() != null){
             userEntity = userRepository.getFirstByTgBotId(authCodeDto.getTgBotId()).orElse(null);
             if (userEntity != null){
+                log.info("Сохранение токена к существующему пользователю: " + userEntity);
                 guid = userEntity.getServiceId(authCodeDto.getMusicProvider());
             }
         }
@@ -70,6 +73,7 @@ public class AuthServiceImpl implements AuthService {
         if (userEntity == null)
             userEntity = new UserEntity();
 
+        log.info("пользователь при регистрации яндекса: " + userEntity);
         userEntity.setServiceId(yandexResp.getYandexId(), MusicProvider.YANDEX);
         return  yandexResp;
     }

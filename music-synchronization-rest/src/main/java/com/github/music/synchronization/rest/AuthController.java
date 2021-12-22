@@ -27,12 +27,14 @@ public class AuthController {
     @Operation(description = "Получение ссылки на авторизацию")
     @PostMapping(value = "/get-url", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public AuthResponseDto getAuthUrl(@RequestBody AuthRequestDto authRequestDto) {
+        log.info("Запрос на получение ссылки: " + authRequestDto);
         return authService.getAuthUrl(authRequestDto);
     }
 
     @Operation(description = "Регистрация в яндекс")
     @PostMapping(value = "/yandex-auth", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public YandexDto getAuthUrl(@RequestBody YandexDto yandexDto) {
+        log.info("Запрос на регистрацию яндекса: " + yandexDto);
         return authService.registerYandex(yandexDto);
     }
 
@@ -40,24 +42,11 @@ public class AuthController {
     @PostMapping(value = "/save-code/{provider}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.ALL_VALUE)
     public BaseDataResponse<AuthCodeDto> saveUser(@PathVariable("provider") MusicProvider provider,
                                                   @RequestParam("code") String code) {
+        log.info("вызов редиректа: " + provider + " " + code);
         AuthCodeDto authCodeDto = AuthCodeDto.builder().musicProvider(provider).authCode(code).build();
         return authService.saveToken(authCodeDto);
     }
 
 
-//    change your return type to ResponseEntity<>, then you can use below for 400
-//
-//return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-//and for correct request
-//
-//return new ResponseEntity<>(json,HttpStatus.OK);
-//UPDATE 1
-//
-//after spring 4.1 there are helper methods in ResponseEntity could be used as
-//
-//return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-//and
-//
-//return ResponseEntity.ok(json);
 
 }
