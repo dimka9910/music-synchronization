@@ -15,8 +15,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,34 +46,61 @@ public class ServiceClientImpl implements ServiceClient {
      **/
     @Override
     public AuthCodeDto getGuidByAuthCode(AuthCodeDto authCodeDto) {
-        return appRestClient.exchange(musicUrlHelper.getUrlMap().get(authCodeDto.getMusicProvider())
-                        + musicUrlHelper.getActionsMap().get(MusicServiceActions.CODE), HttpMethod.GET,
-                new HttpEntity<>(authCodeDto, null), new ParameterizedTypeReference<AuthCodeDto>() {
-                }).getBody();
+//        ResponseEntity<YandexDto> responseEntity = appRestClient.exchange(musicUrlHelper.getUrlMap().get(authCodeDto.getMusicProvider())
+//                        + musicUrlHelper.getActionsMap().get(MusicServiceActions.CODE), HttpMethod.GET,
+//                new HttpEntity<>(authCodeDto, null), new ParameterizedTypeReference<AuthCodeDto>() {
+//                });
+//
+//        switch (responseEntity.getStatusCode()){
+//            case BAD_REQUEST:
+//                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "");
+//        }
+//        responseEntity.get
+        return null;
+
     }
 
 
     @Override
     public YandexDto registerYandex(YandexDto yandexDto) {
-        return appRestClient.exchange(musicUrlHelper.getUrlMap().get(MusicProvider.YANDEX)
+        ResponseEntity<YandexDto> responseEntity = appRestClient.exchange(musicUrlHelper.getUrlMap().get(MusicProvider.YANDEX)
                         + musicUrlHelper.getActionsMap().get(MusicServiceActions.REGISTER_YANDEX), HttpMethod.POST,
                 new HttpEntity<>(yandexDto, null), new ParameterizedTypeReference<YandexDto>() {
-                }).getBody();
+                });
+
+        switch (responseEntity.getStatusCode()){
+            case BAD_REQUEST:
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "the login or password is incorrect");
+        }
+        return responseEntity.getBody();
     }
 
     @Override
     public PlaylistDto getPlaylist(PlaylistRequestDto playlistRequestDto){
-        return appRestClient.exchange(musicUrlHelper.getUrlMap().get(playlistRequestDto.getMusicProvider())
+        ResponseEntity<PlaylistDto> responseEntity = appRestClient.exchange(musicUrlHelper.getUrlMap().get(playlistRequestDto.getMusicProvider())
                         + musicUrlHelper.getActionsMap().get(MusicServiceActions.EXPORT_PLAYLIST), HttpMethod.POST,
                 new HttpEntity<>(playlistRequestDto, null), new ParameterizedTypeReference<PlaylistDto>() {
-                }).getBody();
+                });
+
+        switch (responseEntity.getStatusCode()){
+            case NOT_FOUND:
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "playlist not found in " + playlistRequestDto.getMusicProvider().name());
+            case UNAUTHORIZED:
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, playlistRequestDto.getMusicProvider().name() + " auth failed");
+        }
+        return responseEntity.getBody();
     }
 
     @Override
     public PlaylistDto importPlaylist(PlaylistDto playlistDto, MusicProvider musicProvider){
-        return appRestClient.exchange(musicUrlHelper.getUrlMap().get(musicProvider)
+        ResponseEntity<PlaylistDto> responseEntity = appRestClient.exchange(musicUrlHelper.getUrlMap().get(musicProvider)
                         + musicUrlHelper.getActionsMap().get(MusicServiceActions.IMPORT_PLAYLIST), HttpMethod.POST,
                 new HttpEntity<>(playlistDto, null), new ParameterizedTypeReference<PlaylistDto>() {
-                }).getBody();
+                });
+        switch (responseEntity.getStatusCode()){
+            case UNAUTHORIZED:
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, musicProvider.name() + " auth failed");
+        }
+        return responseEntity.getBody();
     }
 }

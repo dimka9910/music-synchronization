@@ -14,6 +14,10 @@ spring:
 #logging:
 #  config: classpath:log4j2-spring.xml
 
+server:
+  error:
+    include-message: always
+
 
 music-services:
   urlMap:
