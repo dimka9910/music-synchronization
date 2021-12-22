@@ -24,8 +24,8 @@ public class PlaylistController {
 
     @Operation(description = "Поиск плейлистов")
     @PostMapping(value = "/transfer-playlist", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public PagingResponseDto<PlaylistDto> transferPlaylist(@RequestBody PlaylistRequestDto playlistRequestDto) {
-        return null;
+    public PlaylistDto transferPlaylist(@RequestBody PlaylistRequestDto playlistRequestDto) {
+        return musicService.transferPlaylist(playlistRequestDto);
     }
 
 

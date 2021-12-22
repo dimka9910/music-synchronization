@@ -9,7 +9,9 @@ import com.github.music.synchronization.service.db.repository.UserRepository;
 import com.github.music.synchronization.service.resttemplate.ServiceClient;
 import com.github.music.synchronization.service.service.MusicService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
 @Component
 @RequiredArgsConstructor
@@ -28,7 +30,12 @@ public class MusicServiceImpl implements MusicService {
             userEntity = userRepository.getFirstByYandexId(playlistRequestDto.getYandexId()).orElse(null);
 
         assert playlistRequestDto.getMusicProvider() != null;
-        assert userEntity != null;
+        if (userEntity == null){
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "no such user");
+        }
+        if (userEntity.getServiceId(playlistRequestDto.getMusicProvider()) == null){
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "no such user for provider");
+        }
 
         playlistRequestDto.setGuid(userEntity.getServiceId(playlistRequestDto.getMusicProvider()));
         PlaylistDto playlistDto = serviceClient.getPlaylist(playlistRequestDto);

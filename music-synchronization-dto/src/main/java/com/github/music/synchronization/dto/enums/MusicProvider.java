@@ -4,4 +4,6 @@ public enum MusicProvider {
     APPLE,
     YANDEX,
     SPOTIFY
+
+
 }
