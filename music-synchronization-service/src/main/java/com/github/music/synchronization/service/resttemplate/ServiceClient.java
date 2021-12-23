@@ -20,5 +20,7 @@ public interface ServiceClient {
 
     PlaylistDto getPlaylist(PlaylistRequestDto playlistRequestDto);
 
-    PlaylistDto importPlaylist(PlaylistDto playlistDto, MusicProvider musicProvider);
+    List<String> getPlaylists(PlaylistRequestDto playlistRequestDto);
+
+    YandexImportStatus importPlaylist(PlaylistDto playlistDto, MusicProvider musicProvider);
 }

@@ -27,9 +27,7 @@ public class ServiceConfig {
         RestTemplate restClient = new RestTemplate(
                 new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
 
-        // Add one interceptor like in your example, except using anonymous class.
         restClient.setInterceptors(Collections.singletonList((request, body, execution) -> {
-
             log.debug("Intercepting...");
             return execution.execute(request, body);
         }));

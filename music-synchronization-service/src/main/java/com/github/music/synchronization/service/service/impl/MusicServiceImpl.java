@@ -47,4 +47,26 @@ public class MusicServiceImpl implements MusicService {
         return serviceClient.importPlaylist(playlistDto, MusicProvider.YANDEX);
     }
 
+    @Override
+    public List<String> getPlaylists(PlaylistRequestDto playlistRequestDto) {
+        UserEntity userEntity = null;
+        if (playlistRequestDto.getTgBotId() != null && playlistRequestDto.getTgBotId() != null)
+            userEntity = userRepository.getFirstByTgBotId(playlistRequestDto.getTgBotId()).orElse(null);
+        if (playlistRequestDto.getMusicProvider() != null && playlistRequestDto.getYandexId() != null)
+            userEntity = userRepository.getFirstByYandexId(playlistRequestDto.getYandexId()).orElse(null);
+
+        assert playlistRequestDto.getMusicProvider() != null;
+        if (userEntity == null){
+            log.error("пользователь не найден");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "no such user");
+        }
+        if (userEntity.getServiceId(playlistRequestDto.getMusicProvider()) == null){
+            log.error("нет гуида пользователя для музыкального сервиса");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "no such user for provider");
+        }
+        playlistRequestDto.setGuid(userEntity.getServiceId(playlistRequestDto.getMusicProvider()));
+
+        log.info("Запрос на плейлисты: " + playlistRequestDto);
+        return serviceClient.getPlaylists(playlistRequestDto);
+    }
 }

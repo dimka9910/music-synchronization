@@ -15,7 +15,7 @@ import java.security.Provider;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "users")
+@Table(name = "musicusers")
 public class UserEntity {
 
     @Id
