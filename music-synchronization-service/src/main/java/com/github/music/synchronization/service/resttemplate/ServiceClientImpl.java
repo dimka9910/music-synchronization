@@ -92,6 +92,21 @@ public class ServiceClientImpl implements ServiceClient {
     }
 
     @Override
+    public List<String> getPlaylists(PlaylistRequestDto playlistRequestDto) {
+        ResponseEntity<List<String>> responseEntity = appRestClient.exchange(musicUrlHelper.getUrlMap().get(playlistRequestDto.getMusicProvider())
+                        + musicUrlHelper.getActionsMap().get(MusicServiceActions.SEARCH_PLAYLIST), HttpMethod.POST,
+                new HttpEntity<>(playlistRequestDto, null), new ParameterizedTypeReference<List<String>>() {
+                });
+
+        switch (responseEntity.getStatusCode()) {
+            case UNAUTHORIZED:
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, playlistRequestDto.getMusicProvider().name() + " auth failed");
+        }
+        log.info("Полученные плейлисты: " + responseEntity.getBody());
+        return responseEntity.getBody();
+    }
+
+    @Override
     public PlaylistDto importPlaylist(PlaylistDto playlistDto, MusicProvider musicProvider){
         ResponseEntity<PlaylistDto> responseEntity = appRestClient.exchange(musicUrlHelper.getUrlMap().get(musicProvider)
                         + musicUrlHelper.getActionsMap().get(MusicServiceActions.IMPORT_PLAYLIST), HttpMethod.POST,

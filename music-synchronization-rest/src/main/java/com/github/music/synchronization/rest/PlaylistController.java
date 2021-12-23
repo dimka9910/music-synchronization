@@ -29,5 +29,12 @@ public class PlaylistController {
         return musicService.transferPlaylist(playlistRequestDto);
     }
 
+    @Operation(description = "Поиск плейлистов")
+    @PostMapping(value = "/playlists", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public List<String> getPlaylists(@RequestBody PlaylistRequestDto playlistRequestDto) {
+        log.info("запрос на трансфер плейлистов: " + playlistRequestDto);
+        return musicService.getPlaylists(playlistRequestDto);
+    }
+
 
 }
