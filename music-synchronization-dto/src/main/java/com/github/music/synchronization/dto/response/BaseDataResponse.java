@@ -1,6 +1,5 @@
 package com.github.music.synchronization.dto.response;
 
-import com.oracle.webservices.internal.api.databinding.DatabindingMode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

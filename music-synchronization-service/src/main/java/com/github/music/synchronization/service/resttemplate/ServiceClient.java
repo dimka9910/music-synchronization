@@ -4,10 +4,13 @@ package com.github.music.synchronization.service.resttemplate;
 import com.github.music.synchronization.dto.enums.MusicProvider;
 import com.github.music.synchronization.dto.music.PlaylistDto;
 import com.github.music.synchronization.dto.request.PlaylistRequestDto;
+import com.github.music.synchronization.dto.response.YandexImportStatus;
 import com.github.music.synchronization.dto.token.AuthRequestDto;
 import com.github.music.synchronization.dto.token.AuthCodeDto;
 import com.github.music.synchronization.dto.token.AuthResponseDto;
 import com.github.music.synchronization.dto.token.YandexDto;
+
+import java.util.List;
 
 public interface ServiceClient {
 
@@ -18,7 +21,7 @@ public interface ServiceClient {
 
     YandexDto registerYandex(YandexDto yandexDto);
 
-    PlaylistDto getPlaylist(PlaylistRequestDto playlistRequestDto);
+    PlaylistDto exportPlaylist(PlaylistRequestDto playlistRequestDto);
 
     List<String> getPlaylists(PlaylistRequestDto playlistRequestDto);
 
