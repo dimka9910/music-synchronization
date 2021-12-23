@@ -1,0 +1,39 @@
+spring:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  datasource:
+#    url: jdbc:h2:mem:test
+    url: jdbc:h2:file:./h2database/db
+    username: sa
+    password: password
+    driverClassName: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
+  liquibase:
+    change-log: classpath:db.changelog/liquibase-changeLog.xml
+
+#logging:
+#  config: classpath:log4j2-spring.xml
+
+server:
+  error:
+    include-message: always
+
+
+music-services:
+  urlMap:
+    APPLE: localhost:8080
+    YANDEX: https://6f97-176-59-37-144.ngrok.io
+    SPOTIFY: https://4b7f-31-134-188-214.ngrok.io
+  actionsMap:
+    URL: /authUrl
+    CODE: /register
+    EXPORT_PLAYLIST: /playlist
+    IMPORT_PLAYLIST: /synchronize_tracks
+    SEARCH_PLAYLIST: /playlistsList
+    REGISTER_YANDEX: /register
+

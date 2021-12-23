@@ -8,15 +8,14 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(name = "PlaylistDto", description = "Плейлист")
+@Schema(name = "PlaylistDto", description = "плейлиста")
 public class PlaylistDto {
-    @Schema(name = "name")
-    String name;
-    @Schema(name = "tracks")
     List<TrackDto> tracks;
+    String name;
+    String yandexId;
+    String guid;
 }
