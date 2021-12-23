@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -39,14 +40,16 @@ public class AuthController {
     }
 
     @Operation(description = "редирект ссылка")
-    @PostMapping(value = "/save-code/{provider}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.ALL_VALUE)
-    public BaseDataResponse<AuthCodeDto> saveUser(@PathVariable("provider") MusicProvider provider,
-                                                  @RequestParam("code") String code) {
+    @GetMapping(value = "/save-code/{provider}", produces = MediaType.ALL_VALUE, consumes = MediaType.ALL_VALUE)
+    public String saveUser(@PathVariable("provider") MusicProvider provider,
+                                                  @RequestParam("code") String code,
+                                                  @RequestParam("state") String state) {
         log.info("вызов редиректа: " + provider + " " + code);
-        AuthCodeDto authCodeDto = AuthCodeDto.builder().musicProvider(provider).authCode(code).build();
-        return authService.saveToken(authCodeDto);
+        AuthCodeDto authCodeDto = AuthCodeDto.builder().musicProvider(provider).tgBotId(state).authCode(code).build();
+        authService.saveToken(authCodeDto);
+
+        return "<h1>You are successfully authorized to " + provider.name().toLowerCase() + "!</h1>\n" +
+                "<p><img style=\"float: left;\" src=\"https://i.postimg.cc/8Cq2Sk6M/sticker-vk-mikewazowski-004-removebg-preview.webp\" width=\"250\" height=\"250\" /></p>";
+
     }
-
-
-
 }

@@ -53,12 +53,17 @@ public class AuthServiceImpl implements AuthService {
         }
         authCodeDto.setGuid(guid);
         String newGuid = serviceClient.getGuidByAuthCode(authCodeDto).getGuid();
+
         if (userEntity == null)
             userEntity = new UserEntity();
         if (newGuid != null)
-            userEntity.setServiceId(guid, authCodeDto.getMusicProvider());
+            userEntity.setServiceId(newGuid, authCodeDto.getMusicProvider());
+
         userEntity.setTgBotId(authCodeDto.getTgBotId());
-        userRepository.save(userEntity);
+        userEntity.setYandexId("750943882C3B0073337EEBDC0BF7CE09B77A8C679CB6E43D47EF4980A0DA4EBE");
+        log.info("сохраняемый пользователь: " + userEntity);
+        userEntity = userRepository.save(userEntity);
+        log.info("пользователь сохранён: " + userEntity);
 
         return new BaseDataResponse();
     }

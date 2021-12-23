@@ -5,13 +5,14 @@ import com.github.music.synchronization.dto.enums.MusicProvider;
 import com.github.music.synchronization.dto.enums.MusicServiceActions;
 import com.github.music.synchronization.dto.music.PlaylistDto;
 import com.github.music.synchronization.dto.request.PlaylistRequestDto;
+import com.github.music.synchronization.dto.response.YandexImportStatus;
 import com.github.music.synchronization.dto.token.AuthRequestDto;
 import com.github.music.synchronization.dto.token.AuthCodeDto;
 import com.github.music.synchronization.dto.token.AuthResponseDto;
 import com.github.music.synchronization.dto.token.YandexDto;
 import com.github.music.synchronization.service.tools.MusicUrlHelper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -21,10 +22,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class ServiceClientImpl implements ServiceClient {
 
@@ -35,7 +36,7 @@ public class ServiceClientImpl implements ServiceClient {
     @Override
     public AuthResponseDto getAuthUrl(AuthRequestDto authRequestDto) {
         return appRestClient.exchange(musicUrlHelper.getUrlMap().get(authRequestDto.getMusicProvider())
-                        + musicUrlHelper.getActionsMap().get(MusicServiceActions.URL), HttpMethod.GET,
+                        + musicUrlHelper.getActionsMap().get(MusicServiceActions.URL), HttpMethod.POST,
                 new HttpEntity<>(authRequestDto, null), new ParameterizedTypeReference<AuthResponseDto>() {
                 }).getBody();
     }
@@ -46,18 +47,19 @@ public class ServiceClientImpl implements ServiceClient {
      **/
     @Override
     public AuthCodeDto getGuidByAuthCode(AuthCodeDto authCodeDto) {
-//        ResponseEntity<YandexDto> responseEntity = appRestClient.exchange(musicUrlHelper.getUrlMap().get(authCodeDto.getMusicProvider())
-//                        + musicUrlHelper.getActionsMap().get(MusicServiceActions.CODE), HttpMethod.GET,
-//                new HttpEntity<>(authCodeDto, null), new ParameterizedTypeReference<AuthCodeDto>() {
-//                });
-//
-//        switch (responseEntity.getStatusCode()){
-//            case BAD_REQUEST:
-//                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "");
-//        }
-//        responseEntity.get
-        return null;
+        ResponseEntity<AuthCodeDto> responseEntity = appRestClient.exchange(musicUrlHelper.getUrlMap().get(authCodeDto.getMusicProvider())
+                        + musicUrlHelper.getActionsMap().get(MusicServiceActions.CODE), HttpMethod.POST,
+                new HttpEntity<>(authCodeDto, null), new ParameterizedTypeReference<AuthCodeDto>() {
+                });
 
+        log.info(String.valueOf(responseEntity.getBody()));
+
+        switch (responseEntity.getStatusCode()) {
+            case BAD_REQUEST:
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "");
+        }
+
+        return responseEntity.getBody();
     }
 
 
@@ -68,7 +70,7 @@ public class ServiceClientImpl implements ServiceClient {
                 new HttpEntity<>(yandexDto, null), new ParameterizedTypeReference<YandexDto>() {
                 });
 
-        switch (responseEntity.getStatusCode()){
+        switch (responseEntity.getStatusCode()) {
             case BAD_REQUEST:
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "the login or password is incorrect");
         }
@@ -76,13 +78,13 @@ public class ServiceClientImpl implements ServiceClient {
     }
 
     @Override
-    public PlaylistDto getPlaylist(PlaylistRequestDto playlistRequestDto){
+    public PlaylistDto exportPlaylist(PlaylistRequestDto playlistRequestDto) {
         ResponseEntity<PlaylistDto> responseEntity = appRestClient.exchange(musicUrlHelper.getUrlMap().get(playlistRequestDto.getMusicProvider())
                         + musicUrlHelper.getActionsMap().get(MusicServiceActions.EXPORT_PLAYLIST), HttpMethod.POST,
                 new HttpEntity<>(playlistRequestDto, null), new ParameterizedTypeReference<PlaylistDto>() {
                 });
 
-        switch (responseEntity.getStatusCode()){
+        switch (responseEntity.getStatusCode()) {
             case NOT_FOUND:
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "playlist not found in " + playlistRequestDto.getMusicProvider().name());
             case UNAUTHORIZED:
@@ -107,12 +109,12 @@ public class ServiceClientImpl implements ServiceClient {
     }
 
     @Override
-    public PlaylistDto importPlaylist(PlaylistDto playlistDto, MusicProvider musicProvider){
-        ResponseEntity<PlaylistDto> responseEntity = appRestClient.exchange(musicUrlHelper.getUrlMap().get(musicProvider)
+    public YandexImportStatus importPlaylist(PlaylistDto playlistDto, MusicProvider musicProvider) {
+        ResponseEntity<YandexImportStatus> responseEntity = appRestClient.exchange(musicUrlHelper.getUrlMap().get(musicProvider)
                         + musicUrlHelper.getActionsMap().get(MusicServiceActions.IMPORT_PLAYLIST), HttpMethod.POST,
-                new HttpEntity<>(playlistDto, null), new ParameterizedTypeReference<PlaylistDto>() {
-                });
-        switch (responseEntity.getStatusCode()){
+                new HttpEntity<>(playlistDto, null), new ParameterizedTypeReference<YandexImportStatus>() {});
+
+        switch (responseEntity.getStatusCode()) {
             case UNAUTHORIZED:
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, musicProvider.name() + " auth failed");
         }
