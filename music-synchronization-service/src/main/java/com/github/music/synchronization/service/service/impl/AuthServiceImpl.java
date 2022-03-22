@@ -60,7 +60,6 @@ public class AuthServiceImpl implements AuthService {
             userEntity.setServiceId(newGuid, authCodeDto.getMusicProvider());
 
         userEntity.setTgBotId(authCodeDto.getTgBotId());
-        userEntity.setYandexId("750943882C3B0073337EEBDC0BF7CE09B77A8C679CB6E43D47EF4980A0DA4EBE");
         log.info("сохраняемый пользователь: " + userEntity);
         userEntity = userRepository.save(userEntity);
         log.info("пользователь сохранён: " + userEntity);
@@ -69,6 +68,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public YandexDto registerYandex(YandexDto yandexDto) {
         YandexDto yandexResp = serviceClient.registerYandex(yandexDto);
         UserEntity userEntity = null;
@@ -80,6 +80,8 @@ public class AuthServiceImpl implements AuthService {
 
         log.info("пользователь при регистрации яндекса: " + userEntity);
         userEntity.setServiceId(yandexResp.getYandexId(), MusicProvider.YANDEX);
+        userEntity.setYandexLogin(yandexDto.getUsername());
+        userRepository.save(userEntity);
         return  yandexResp;
     }
 }

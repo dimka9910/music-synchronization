@@ -25,15 +25,13 @@ public class MusicServiceImpl implements MusicService {
     private final ServiceClient serviceClient;
 
 
-    @Override
-    public YandexImportStatus transferPlaylist(PlaylistRequestDto playlistRequestDto) {
+    public UserEntity getUserEntityFromPlaylistRequest(PlaylistRequestDto playlistRequestDto){
         UserEntity userEntity = null;
         if (playlistRequestDto.getTgBotId() != null && playlistRequestDto.getTgBotId() != null)
             userEntity = userRepository.getFirstByTgBotId(playlistRequestDto.getTgBotId()).orElse(null);
-        if (playlistRequestDto.getMusicProvider() != null && playlistRequestDto.getYandexId() != null)
-            userEntity = userRepository.getFirstByYandexId(playlistRequestDto.getYandexId()).orElse(null);
+        if (playlistRequestDto.getMusicProvider() != null && playlistRequestDto.getYandexLogin() != null)
+            userEntity = userRepository.getFirstByYandexLogin(playlistRequestDto.getYandexLogin()).orElse(null);
 
-        assert playlistRequestDto.getMusicProvider() != null;
         if (userEntity == null){
             log.error("пользователь не найден");
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "no such user");
@@ -42,32 +40,33 @@ public class MusicServiceImpl implements MusicService {
             log.error("нет гуида пользователя для музыкального сервиса");
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "no such user for provider");
         }
+        return userEntity;
+    }
+
+
+    @Override
+    public YandexImportStatus transferPlaylist(PlaylistRequestDto playlistRequestDto) {
+        UserEntity userEntity = getUserEntityFromPlaylistRequest(playlistRequestDto);
 
         playlistRequestDto.setGuid(userEntity.getServiceId(playlistRequestDto.getMusicProvider()));
+
+        if (userEntity.getYandexId() == null){
+            log.error("yandexId is null");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "yandexId is null");
+        }
+
         log.info("Запрос из : " + playlistRequestDto.getMusicProvider().name() + " : " + playlistRequestDto);
         PlaylistDto playlistDto = serviceClient.exportPlaylist(playlistRequestDto);
         log.info("Получен плейлист: " + playlistDto);
+
         playlistDto.setYandexId(userEntity.getYandexId());
         return serviceClient.importPlaylist(playlistDto, MusicProvider.YANDEX);
     }
 
     @Override
     public List<String> getPlaylists(PlaylistRequestDto playlistRequestDto) {
-        UserEntity userEntity = null;
-        if (playlistRequestDto.getTgBotId() != null && playlistRequestDto.getTgBotId() != null)
-            userEntity = userRepository.getFirstByTgBotId(playlistRequestDto.getTgBotId()).orElse(null);
-        if (playlistRequestDto.getMusicProvider() != null && playlistRequestDto.getYandexId() != null)
-            userEntity = userRepository.getFirstByYandexId(playlistRequestDto.getYandexId()).orElse(null);
+        UserEntity userEntity = getUserEntityFromPlaylistRequest(playlistRequestDto);
 
-        assert playlistRequestDto.getMusicProvider() != null;
-        if (userEntity == null){
-            log.error("пользователь не найден");
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "no such user");
-        }
-        if (userEntity.getServiceId(playlistRequestDto.getMusicProvider()) == null){
-            log.error("нет гуида пользователя для музыкального сервиса");
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "no such user for provider");
-        }
         playlistRequestDto.setGuid(userEntity.getServiceId(playlistRequestDto.getMusicProvider()));
 
         log.info("Запрос на плейлисты: " + playlistRequestDto);

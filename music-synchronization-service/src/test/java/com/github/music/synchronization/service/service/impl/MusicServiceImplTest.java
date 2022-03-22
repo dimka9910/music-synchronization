@@ -38,8 +38,8 @@ public class MusicServiceImplTest {
 
     @Test
     public void testTransferPlaylistViaTGBot() throws Exception {
-        when(userRepository.getFirstByTgBotId(anyString())).thenReturn(Optional.ofNullable(UserEntity.builder().spotifyId("testSpotifyId").build()));
-        when(userRepository.getFirstByYandexId(anyString())).thenReturn(null);
+        when(userRepository.getFirstByTgBotId(anyString())).thenReturn(Optional.ofNullable(UserEntity.builder().spotifyId("testSpotifyId").yandexId("yandexId").build()));
+        when(userRepository.getFirstByYandexLogin(anyString())).thenReturn(null);
 
         when(serviceClient.exportPlaylist(any())).thenReturn(new PlaylistDto(Collections.singletonList(TrackDto.builder().name("songname").artist("artist").album("album").build()), "name", "yandexId", "guid"));
         when(serviceClient.importPlaylist(any(), any())).thenReturn(new YandexImportStatus("status", "message"));
@@ -51,7 +51,7 @@ public class MusicServiceImplTest {
     @Test
     public void testTransferPlaylistViaAlisa() throws Exception {
         when(userRepository.getFirstByTgBotId(anyString())).thenReturn(null);
-        when(userRepository.getFirstByYandexId(anyString())).thenReturn(Optional.ofNullable(UserEntity.builder().spotifyId("testSpotifyId").build()));
+        when(userRepository.getFirstByYandexLogin(anyString())).thenReturn(Optional.ofNullable(UserEntity.builder().yandexId("yandexId").spotifyId("testSpotifyId").build()));
 
         when(serviceClient.exportPlaylist(any())).thenReturn(new PlaylistDto(Collections.singletonList(TrackDto.builder().name("songname").artist("artist").album("album").build()), "name", "yandexId", "guid"));
         when(serviceClient.importPlaylist(any(), any())).thenReturn(new YandexImportStatus("status", "message"));
@@ -73,7 +73,7 @@ public class MusicServiceImplTest {
 
     @Test(expected = ResponseStatusException.class)
     public void testTransferPlaylistExceptionNoServiceIdForMusicProvider() throws Exception {
-        when(userRepository.getFirstByYandexId(anyString())).thenReturn(Optional.ofNullable(UserEntity.builder().spotifyId(null).build()));
+        when(userRepository.getFirstByYandexLogin(anyString())).thenReturn(Optional.ofNullable(UserEntity.builder().spotifyId(null).build()));
 
         when(serviceClient.exportPlaylist(any())).thenReturn(new PlaylistDto(Collections.singletonList(TrackDto.builder().name("songname").artist("artist").album("album").build()), "name", "yandexId", "guid"));
         when(serviceClient.importPlaylist(any(), any())).thenReturn(new YandexImportStatus("status", "message"));
@@ -88,7 +88,7 @@ public class MusicServiceImplTest {
     public void testGetPlaylistsViaTGBot() throws Exception {
 
         when(userRepository.getFirstByTgBotId(anyString())).thenReturn(Optional.ofNullable(UserEntity.builder().spotifyId("testSpotifyId").build()));
-        when(userRepository.getFirstByYandexId(anyString())).thenReturn(null);
+        when(userRepository.getFirstByYandexLogin(anyString())).thenReturn(null);
 
         when(serviceClient.getPlaylists(any())).thenReturn(Arrays.<String>asList("String"));
 
@@ -99,7 +99,7 @@ public class MusicServiceImplTest {
     @Test
     public void testGetPlaylistsViaAlisa() throws Exception {
         when(userRepository.getFirstByTgBotId(anyString())).thenReturn(null);
-        when(userRepository.getFirstByYandexId(anyString())).thenReturn(Optional.ofNullable(UserEntity.builder().spotifyId("testSpotifyId").build()));
+        when(userRepository.getFirstByYandexLogin(anyString())).thenReturn(Optional.ofNullable(UserEntity.builder().spotifyId("testSpotifyId").build()));
 
         when(serviceClient.getPlaylists(any())).thenReturn(Arrays.<String>asList("String"));
 
@@ -111,7 +111,7 @@ public class MusicServiceImplTest {
     public void testGetPlaylistsExceptionNoTgBotInfo() throws Exception {
 
         when(userRepository.getFirstByTgBotId(anyString())).thenReturn(Optional.ofNullable(UserEntity.builder().spotifyId("testSpotifyId").build()));
-        when(userRepository.getFirstByYandexId(anyString())).thenReturn(null);
+        when(userRepository.getFirstByYandexLogin(anyString())).thenReturn(null);
 
 
         when(userRepository.getFirstByTgBotId(eq("tgBotId"))).thenReturn(Optional.ofNullable(UserEntity.builder().spotifyId("testSpotifyId").build()));
@@ -124,7 +124,7 @@ public class MusicServiceImplTest {
 
     @Test(expected = ResponseStatusException.class)
     public void testGetPlaylistsExceptionNoServiceIdForMusicProvider() throws Exception {
-        when(userRepository.getFirstByYandexId(anyString())).thenReturn(Optional.ofNullable(UserEntity.builder().spotifyId(null).build()));
+        when(userRepository.getFirstByYandexLogin(anyString())).thenReturn(Optional.ofNullable(UserEntity.builder().spotifyId(null).build()));
         when(userRepository.getFirstByTgBotId(anyString())).thenReturn(Optional.ofNullable(UserEntity.builder().spotifyId("testSpotifyId").build()));
 
 
@@ -135,4 +135,3 @@ public class MusicServiceImplTest {
     }
 }
 
-//Generated with love by TestMe :) Please report issues and submit feature requests at: http://weirddev.com/forum#!/testme
