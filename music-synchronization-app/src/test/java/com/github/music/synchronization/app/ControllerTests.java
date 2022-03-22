@@ -2,11 +2,16 @@ package com.github.music.synchronization.app;
 
 import com.github.music.synchronization.app.config.ApplicationConfiguration;
 import com.github.music.synchronization.dto.enums.MusicProvider;
+import com.github.music.synchronization.dto.music.PlaylistDto;
+import com.github.music.synchronization.dto.music.TrackDto;
+import com.github.music.synchronization.dto.request.PlaylistRequestDto;
+import com.github.music.synchronization.dto.response.YandexImportStatus;
 import com.github.music.synchronization.dto.token.AuthCodeDto;
 import com.github.music.synchronization.dto.token.AuthRequestDto;
 import com.github.music.synchronization.dto.token.AuthResponseDto;
 import com.github.music.synchronization.dto.token.YandexDto;
 import com.github.music.synchronization.rest.AuthController;
+import com.github.music.synchronization.service.db.entity.UserEntity;
 import com.github.music.synchronization.service.db.repository.UserRepository;
 import com.github.music.synchronization.service.resttemplate.ServiceClient;
 import org.junit.Before;
@@ -34,8 +39,13 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
+import org.testcontainers.shaded.org.hamcrest.Matchers;
 
 import javax.servlet.ServletContext;
+import javax.transaction.Transactional;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -68,15 +78,7 @@ public class ControllerTests {
     }
 
     @Test
-    public void givenWac_whenServletContext_thenItProvidesGreetController() {
-        ServletContext servletContext = webApplicationContext.getServletContext();
-
-        Assertions.assertNotNull(servletContext);
-        Assertions.assertTrue(servletContext instanceof MockServletContext);
-        Assertions.assertNotNull(webApplicationContext.getBean("authController"));
-    }
-
-    @Test
+    @Transactional
     public void getAuthUrlTest() throws Exception {
         when(serviceClient.getAuthUrl(any(AuthRequestDto.class))).thenReturn(AuthResponseDto.builder().url(url).build());
         this.mockMvc.perform(MockMvcRequestBuilders.post("/rest/auth/get-url")
@@ -88,6 +90,7 @@ public class ControllerTests {
     }
 
     @Test
+    @Transactional
     public void registerYandexTest() throws Exception {
         when(serviceClient.registerYandex(any(YandexDto.class))).thenReturn(YandexDto.builder().yandexId(yandexGuid).build());
 
@@ -100,12 +103,49 @@ public class ControllerTests {
     }
 
     @Test
+    @Transactional
     public void getRedirectResultTest() throws Exception {
         when(serviceClient.getGuidByAuthCode(any(AuthCodeDto.class))).thenReturn(AuthCodeDto.builder().guid(spotifyGuid).build());
 
         this.mockMvc.perform(MockMvcRequestBuilders.get("/rest/auth/save-code/" + provider.toString())
                         .contentType(MediaType.ALL_VALUE).param("code", authCode).param("state", tgBotId))
                 .andExpect(status().is2xxSuccessful());
+    }
+
+    @Test
+    @Transactional
+    public void transferPlaylistTest() throws Exception {
+        UserEntity userEntity = UserEntity.builder().spotifyId(spotifyGuid).yandexId(yandexGuid).yandexLogin(yandexLogin).tgBotId(tgBotId).build();
+        userRepository.save(userEntity);
+
+        when(serviceClient.exportPlaylist(any(PlaylistRequestDto.class))).thenReturn(new PlaylistDto(Collections.singletonList(TrackDto.builder().name("songname").artist("artist").album("album").build()), "rock", null, null));
+        when(serviceClient.importPlaylist(any(PlaylistDto.class), any(MusicProvider.class))).thenReturn(YandexImportStatus.builder().status("success").message("ok").build());
+
+        this.mockMvc.perform(MockMvcRequestBuilders.post("/rest/playlists/transfer-playlist")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(PlaylistRequestDto.builder().tgBotId(tgBotId).musicProvider(MusicProvider.SPOTIFY).name("rock").build()))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.status").value("success"))
+                .andExpect(jsonPath("$.message").value("ok"));
+    }
+
+    @Test
+    @Transactional
+    public void getPlaylistsTest() throws Exception {
+        UserEntity userEntity = UserEntity.builder().spotifyId(spotifyGuid).yandexId(yandexGuid).yandexLogin(yandexLogin).tgBotId(tgBotId).build();
+        userRepository.save(userEntity);
+
+        when(serviceClient.getPlaylists(any(PlaylistRequestDto.class))).thenReturn(Arrays.asList("rock","pop","educational"));
+
+        this.mockMvc.perform(MockMvcRequestBuilders.post("/rest/playlists/playlists")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(PlaylistRequestDto.builder().tgBotId(tgBotId).musicProvider(MusicProvider.SPOTIFY).build()))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$[0]").value("rock"))
+                .andExpect(jsonPath("$[1]").value("pop"))
+                .andExpect(jsonPath("$[2]").value("educational"));
     }
 
 
