@@ -21,6 +21,8 @@ spring:
 server:
   error:
     include-message: always
+  server:
+    port=${PORT:5000}:
 
 
 music-services:
