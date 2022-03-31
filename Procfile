@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -jar music-synchronization-app/target/notification-service.jar -Dserver.port=$PORT
+web: java $JAVA_OPTS -jar music-synchronization-app/target/music-synchronization.jar -Dserver.port=$PORT

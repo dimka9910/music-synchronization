@@ -112,7 +112,7 @@
     </dependencies>
 
     <build>
-        <finalName>notification-service</finalName>
+        <finalName>music-synchronization</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -139,7 +139,7 @@
                 <version>2.3.2.RELEASE</version>
                 <configuration>
                     <!--<executable>true</executable>-->
-                    <mainClass>com.digdes.notification.service.app.Application</mainClass>
+                    <mainClass>com.github.music.synchronization.app.Application</mainClass>
                 </configuration>
                 <executions>
                     <execution>
