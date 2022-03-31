@@ -35,10 +35,9 @@ public class ServiceClientImpl implements ServiceClient {
 
     @Override
     public AuthResponseDto getAuthUrl(AuthRequestDto authRequestDto) {
-        return appRestClient.exchange(musicUrlHelper.getUrlMap().get(authRequestDto.getMusicProvider())
-                        + musicUrlHelper.getActionsMap().get(MusicServiceActions.URL), HttpMethod.POST,
-                new HttpEntity<>(authRequestDto, null), new ParameterizedTypeReference<AuthResponseDto>() {
-                }).getBody();
+        String url = musicUrlHelper.getUrlMap().get(authRequestDto.getMusicProvider()) + musicUrlHelper.getActionsMap().get(MusicServiceActions.URL);
+        ResponseEntity<AuthResponseDto> responseEntity =  appRestClient.exchange(url, HttpMethod.POST, new HttpEntity<>(authRequestDto, null), new ParameterizedTypeReference<AuthResponseDto>() {});
+        return responseEntity.getBody();
     }
 
 
@@ -53,7 +52,6 @@ public class ServiceClientImpl implements ServiceClient {
                 });
 
         log.info(String.valueOf(responseEntity.getBody()));
-
         switch (responseEntity.getStatusCode()) {
             case BAD_REQUEST:
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "");

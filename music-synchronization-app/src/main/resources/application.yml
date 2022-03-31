@@ -27,8 +27,8 @@ server:
 music-services:
   urlMap:
     APPLE: localhost:8080
-    YANDEX: https://6f97-176-59-37-144.ngrok.io
-    SPOTIFY: https://4b7f-31-134-188-214.ngrok.io
+    YANDEX: https://44e2-176-59-2-245.ngrok.io
+    SPOTIFY: https://636e-31-134-188-214.ngrok.io
   actionsMap:
     URL: /authUrl
     CODE: /register

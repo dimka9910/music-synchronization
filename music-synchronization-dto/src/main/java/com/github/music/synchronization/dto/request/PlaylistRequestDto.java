@@ -26,5 +26,5 @@ public class PlaylistRequestDto {
 
     String guid;
 
-    String yandexId;
+    String yandexLogin;
 }

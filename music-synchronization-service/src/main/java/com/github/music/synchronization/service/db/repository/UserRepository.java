@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
     Optional<UserEntity> getFirstByTgBotId(String tgBotId);
-    Optional<UserEntity> getFirstByYandexId(String yandexId);
+    Optional<UserEntity> getFirstByYandexLogin(String yandexLogin);
 }

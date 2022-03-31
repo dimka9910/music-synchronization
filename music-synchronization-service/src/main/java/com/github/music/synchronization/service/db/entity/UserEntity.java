@@ -25,6 +25,9 @@ public class UserEntity {
     @Column(name = "tg_bot_id")
     String tgBotId;
 
+    @Column(name = "yandex_login")
+    String yandexLogin;
+
     @Column(name = "yandex_id")
     String yandexId;
 
@@ -42,6 +45,9 @@ public class UserEntity {
             case SPOTIFY:
                 this.spotifyId = guid;
                 break;
+            case YANDEX:
+                this.yandexId = guid;
+                break;
         }
     }
 
@@ -51,6 +57,8 @@ public class UserEntity {
                 return appleId;
             case SPOTIFY:
                 return spotifyId;
+            case YANDEX:
+                return yandexId;
             default:
                 return null;
         }
