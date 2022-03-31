@@ -11,8 +11,6 @@
 
     <artifactId>music-synchronization-service</artifactId>
 
-    <properties>
-    </properties>
 
     <dependencies>
         <dependency>
