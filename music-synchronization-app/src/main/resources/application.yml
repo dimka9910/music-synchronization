@@ -30,10 +30,10 @@ music-services:
     YANDEX: ${YANDEX_URL:noyandex}
     SPOTIFY: ${SPOTIFY_URL:nospotify}
   actionsMap:
-    URL: /authUrl
-    CODE: /register
-    EXPORT_PLAYLIST: /playlist
-    IMPORT_PLAYLIST: /synchronize_tracks
-    SEARCH_PLAYLIST: /playlistsList
-    REGISTER_YANDEX: /register
+    URL: ${GET_AUTH_URL:/authUrl}
+    CODE: ${GET_AUTH_CODE:/register}
+    EXPORT_PLAYLIST: ${EXPORT_PLAYLIST:/playlist}
+    IMPORT_PLAYLIST: ${IMPORT_PLAYLIST:/test-synchronize-tracks}
+    SEARCH_PLAYLIST: ${SEARCH_PLAYLIST:/playlistsList}
+    REGISTER_YANDEX: ${REGISTER_YANDEX:/test-register}
 
