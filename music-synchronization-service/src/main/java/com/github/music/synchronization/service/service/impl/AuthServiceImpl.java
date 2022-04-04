@@ -71,15 +71,20 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public YandexDto registerYandex(YandexDto yandexDto) {
         YandexDto yandexResp = serviceClient.registerYandex(yandexDto);
-        UserEntity userEntity = null;
-        if (yandexDto.getTgBotId() != null){
+        UserEntity userEntity = userRepository.getFirstByYandexLogin(yandexDto.getUsername()).orElse(null);
+        if (userEntity == null && yandexDto.getTgBotId() != null){
             userEntity = userRepository.getFirstByTgBotId(yandexDto.getTgBotId()).orElse(null);
         }
-        if (userEntity == null)
+        if (userEntity == null) {
             userEntity = new UserEntity();
+            userEntity.setTgBotId(yandexDto.getTgBotId());
+        }
+        if (userEntity.getTgBotId() == null && yandexDto.getTgBotId() != null){
+            userEntity.setTgBotId(yandexDto.getTgBotId());
+        }
 
         log.info("пользователь при регистрации яндекса: " + userEntity);
-        userEntity.setServiceId(yandexResp.getYandexId(), MusicProvider.YANDEX);
+        userEntity.setServiceId(yandexDto.getUsername(), MusicProvider.YANDEX);
         userEntity.setYandexLogin(yandexDto.getUsername());
         userRepository.save(userEntity);
         return  yandexResp;
