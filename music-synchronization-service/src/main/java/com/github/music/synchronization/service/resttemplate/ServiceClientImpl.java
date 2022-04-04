@@ -36,7 +36,9 @@ public class ServiceClientImpl implements ServiceClient {
     @Override
     public AuthResponseDto getAuthUrl(AuthRequestDto authRequestDto) {
         String url = musicUrlHelper.getUrlMap().get(authRequestDto.getMusicProvider()) + musicUrlHelper.getActionsMap().get(MusicServiceActions.URL);
+        log.info("Запрос по адресу: " + url + "\n body: " + authRequestDto);
         ResponseEntity<AuthResponseDto> responseEntity =  appRestClient.exchange(url, HttpMethod.POST, new HttpEntity<>(authRequestDto, null), new ParameterizedTypeReference<AuthResponseDto>() {});
+        log.info("RESPONSE: " + responseEntity);
         return responseEntity.getBody();
     }
 
@@ -46,10 +48,15 @@ public class ServiceClientImpl implements ServiceClient {
      **/
     @Override
     public AuthCodeDto getGuidByAuthCode(AuthCodeDto authCodeDto) {
-        ResponseEntity<AuthCodeDto> responseEntity = appRestClient.exchange(musicUrlHelper.getUrlMap().get(authCodeDto.getMusicProvider())
-                        + musicUrlHelper.getActionsMap().get(MusicServiceActions.CODE), HttpMethod.POST,
+        String url = musicUrlHelper.getUrlMap().get(authCodeDto.getMusicProvider())
+                + musicUrlHelper.getActionsMap().get(MusicServiceActions.CODE);
+        log.info("Запрос по адресу: " + url + "\n body: " + authCodeDto);
+
+        ResponseEntity<AuthCodeDto> responseEntity = appRestClient.exchange(url, HttpMethod.POST,
                 new HttpEntity<>(authCodeDto, null), new ParameterizedTypeReference<AuthCodeDto>() {
                 });
+
+        log.info("RESPONSE: " + responseEntity);
 
         log.info(String.valueOf(responseEntity.getBody()));
         switch (responseEntity.getStatusCode()) {
@@ -63,10 +70,15 @@ public class ServiceClientImpl implements ServiceClient {
 
     @Override
     public YandexDto registerYandex(YandexDto yandexDto) {
-        ResponseEntity<YandexDto> responseEntity = appRestClient.exchange(musicUrlHelper.getUrlMap().get(MusicProvider.YANDEX)
-                        + musicUrlHelper.getActionsMap().get(MusicServiceActions.REGISTER_YANDEX), HttpMethod.POST,
+        String url = musicUrlHelper.getUrlMap().get(MusicProvider.YANDEX)
+                + musicUrlHelper.getActionsMap().get(MusicServiceActions.REGISTER_YANDEX);
+        log.info("Запрос по адресу: " + url + "\n body: " + yandexDto);
+
+        ResponseEntity<YandexDto> responseEntity = appRestClient.exchange(url, HttpMethod.POST,
                 new HttpEntity<>(yandexDto, null), new ParameterizedTypeReference<YandexDto>() {
                 });
+
+        log.info("RESPONSE: " + responseEntity);
 
         switch (responseEntity.getStatusCode()) {
             case BAD_REQUEST:
@@ -77,10 +89,15 @@ public class ServiceClientImpl implements ServiceClient {
 
     @Override
     public PlaylistDto exportPlaylist(PlaylistRequestDto playlistRequestDto) {
-        ResponseEntity<PlaylistDto> responseEntity = appRestClient.exchange(musicUrlHelper.getUrlMap().get(playlistRequestDto.getMusicProvider())
-                        + musicUrlHelper.getActionsMap().get(MusicServiceActions.EXPORT_PLAYLIST), HttpMethod.POST,
-                new HttpEntity<>(playlistRequestDto, null), new ParameterizedTypeReference<PlaylistDto>() {
-                });
+        String url = musicUrlHelper.getUrlMap().get(playlistRequestDto.getMusicProvider())
+                + musicUrlHelper.getActionsMap().get(MusicServiceActions.EXPORT_PLAYLIST);
+
+        log.info("Запрос по адресу: " + url + "\n body: " + playlistRequestDto);
+
+        ResponseEntity<PlaylistDto> responseEntity = appRestClient.exchange(url, HttpMethod.POST,
+                new HttpEntity<>(playlistRequestDto, null), new ParameterizedTypeReference<PlaylistDto>() {});
+
+        log.info("RESPONSE: " + responseEntity);
 
         switch (responseEntity.getStatusCode()) {
             case NOT_FOUND:
@@ -93,10 +110,15 @@ public class ServiceClientImpl implements ServiceClient {
 
     @Override
     public List<String> getPlaylists(PlaylistRequestDto playlistRequestDto) {
-        ResponseEntity<List<String>> responseEntity = appRestClient.exchange(musicUrlHelper.getUrlMap().get(playlistRequestDto.getMusicProvider())
-                        + musicUrlHelper.getActionsMap().get(MusicServiceActions.SEARCH_PLAYLIST), HttpMethod.POST,
-                new HttpEntity<>(playlistRequestDto, null), new ParameterizedTypeReference<List<String>>() {
-                });
+        String url = musicUrlHelper.getUrlMap().get(playlistRequestDto.getMusicProvider())
+                + musicUrlHelper.getActionsMap().get(MusicServiceActions.SEARCH_PLAYLIST);
+        log.info("Запрос по адресу: " + url + "\n body: " + playlistRequestDto);
+
+
+        ResponseEntity<List<String>> responseEntity = appRestClient.exchange(url, HttpMethod.POST,
+                new HttpEntity<>(playlistRequestDto, null), new ParameterizedTypeReference<List<String>>() {});
+
+        log.info("RESPONSE: " + responseEntity);
 
         switch (responseEntity.getStatusCode()) {
             case UNAUTHORIZED:
@@ -108,9 +130,14 @@ public class ServiceClientImpl implements ServiceClient {
 
     @Override
     public YandexImportStatus importPlaylist(PlaylistDto playlistDto, MusicProvider musicProvider) {
-        ResponseEntity<YandexImportStatus> responseEntity = appRestClient.exchange(musicUrlHelper.getUrlMap().get(musicProvider)
-                        + musicUrlHelper.getActionsMap().get(MusicServiceActions.IMPORT_PLAYLIST), HttpMethod.POST,
+        String url = musicUrlHelper.getUrlMap().get(musicProvider)
+                + musicUrlHelper.getActionsMap().get(MusicServiceActions.IMPORT_PLAYLIST);
+        log.info("Запрос по адресу: " + url + "\n body: " + playlistDto + " " + musicProvider);
+
+        ResponseEntity<YandexImportStatus> responseEntity = appRestClient.exchange(url, HttpMethod.POST,
                 new HttpEntity<>(playlistDto, null), new ParameterizedTypeReference<YandexImportStatus>() {});
+
+        log.info("RESPONSE: " + responseEntity);
 
         switch (responseEntity.getStatusCode()) {
             case UNAUTHORIZED:
